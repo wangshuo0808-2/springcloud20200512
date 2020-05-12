@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="cn.bdqn.dao.MemoryMapper">
+ 	<select id="getCount" resultType="int">
+ 		SELECT  COUNT(1) FROM `travelmemory`  
+ 		<where>
+ 		<if test="title!=null and title!=''">
+ 		 title LIKE CONCAT('%',#{title},'%')
+ 		</if>
+ 		AND `lock`=0
+ 		</where>
+ 	</select>
+ 	<select id="getList" resultType="Memory">
+ 		SELECT  * FROM `travelmemory`  
+ 		<where>
+ 		<if test="title!=null and title!=''">
+ 		 title LIKE CONCAT('%',#{title},'%')
+ 		</if>
+ 		AND `lock`=0
+ 		</where>
+ 		 ORDER BY `submitTime` DESC LIMIT #{start},#{pageSize}
+ 	</select>
+ 	<delete id="delete" parameterType="int">
+ 		DELETE FROM `travelmemory` WHERE `travelMemoryId`=#{travelMemoryId}
+ 	</delete>
+ 	<insert id="addMemory" parameterType="Memory">
+ 		INSERT INTO `travelmemory` VALUES(NULL,#{userName},#{title},
+ 		#{submitTime},#{content},#{photo},#{memoryType},0)
+ 	</insert>
+ 	<select id="getMemory" parameterType="int" resultType="Memory">
+ 		SELECT * FROM `travelmemory` WHERE `travelMemoryId`=#{travelMemoryId}
+ 	</select>
+ 	<select id="getUserNameCount" resultType="int">
+ 		SELECT COUNT(1) FROM `travelmemory` 
+ 		<where>
+ 		<if test="title!=null and title!=''">
+ 		 title LIKE CONCAT('%',#{title},'%')
+ 		</if>
+ 		AND `userName`=#{userName}
+ 		</where>
+ 	</select>
+ 	<select id="getUserNameList" resultType="Memory">
+ 		SELECT * FROM `travelmemory` 
+ 		<where>
+ 		<if test="title!=null and title!=''">
+ 		 title LIKE CONCAT('%',#{title},'%')
+ 		</if>
+ 		AND `userName`=#{userName}
+ 		</where>
+ 		ORDER BY `submitTime` DESC LIMIT #{start},#{pageSize} 
+ 	</select>
+ 	<update id="updateLock" parameterType="Memory">
+ 		UPDATE `travelmemory` SET  `lock`=1 WHERE `travelMemoryId`=#{travelMemoryId}
+ 	</update>
+ 	<select id="getTitleCount" parameterType="string" resultType="int">
+		SELECT COUNT(1) FROM `travelmemory` WHERE `title`=#{title} AND `lock`=0
+	</select>
+	<select id="getMemoryByTitle" parameterType="string" resultType="Memory">
+		SELECT * FROM `travelmemory` WHERE title=#{title}
+	</select>
+	<select id="getTravelMemoryIdByTitle" parameterType="string" resultType="int">
+		SELECT `travelMemoryId` FROM `travelmemory` WHERE `title`=#{title}
+	</select>
+	<select id="getCountByMemoryType" resultType="int">
+		SELECT COUNT(1) FROM `travelmemory` 
+		<where>
+		<if test="title!=null and title!=''">
+ 		   title LIKE CONCAT('%',#{title},'%')
+ 		</if>  
+		<if test="memoryType!=null and memoryType!=''">
+		 AND memoryType=#{memoryType} 
+		</if>
+		AND `lock`=0
+		</where>
+	</select>
+	<select id="getMemoryList" resultType="Memory">
+		SELECT * FROM `travelmemory`
+		<where>
+		<if test="title!=null and title!=''">
+ 		   title LIKE CONCAT('%',#{title},'%')
+ 		</if>   
+		<if test="memoryType!=null and memoryType!=''">
+		  AND memoryType=#{memoryType} 
+		</if>
+		AND `lock`=0
+		</where>
+		ORDER BY `submitTime` DESC LIMIT #{start},#{pageSize}
+	</select>
+ </mapper>

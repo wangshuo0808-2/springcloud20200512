@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bdqn.dao.UserMapper">
+
+	<select id="login" resultType="User" parameterType="User">
+		SELECT * FROM `user` WHERE `userName`=#{userName} 
+		AND `userPwd`=#{userPwd} AND `lock`=0
+	</select>
+	<insert id="addUser" parameterType="User">
+		INSERT INTO `user`(`userName`,`userPwd`,`email`)
+		VALUES(#{userName},#{userPwd},#{email})
+	</insert>
+	<insert id="addAdmin" parameterType="User">
+		INSERT INTO `user`(`userName`,`userPwd`,roleId)
+		VALUES(#{userName},#{userPwd},#{roleId})
+	</insert>
+	<update id="updateUserPwd" parameterType="User">
+		UPDATE `user` SET `userPwd`=#{userPwd} WHERE `userName`=#{userName}
+	</update>
+	<select id="getUserNameCount" parameterType="string" resultType="int">
+		SELECT COUNT(1) FROM `user` WHERE `userName`=#{userName} AND `lock`=0
+	</select>
+	<update id="updateUser" parameterType="User">
+		UPDATE `user` 
+		<trim prefix="set" suffixOverrides="," suffix="WHERE `userId`=#{userId}">
+		<if test="userName!=null and userName!=''">`userName`=#{userName},</if>
+		<if test="`email`!=null and `email`!=''">`email`=#{email},</if>
+		<if test="`gender`!=null and `gender`!=''">`gender`=#{gender},</if>
+		<if test="birthday!=null ">`birthday`=#{birthday},</if>
+		<if test="addressCity!=null and addressCity!=''">`addressCity`=#{addressCity},</if>
+		<if test="QQ!=null and QQ!=''">`QQ`=#{QQ},</if>
+		<if test="telephone!=null and telephone!=''">`telephone`=#{telephone},</if>
+		<if test="hobby!=null and hobby!=''">`hobby`=#{hobby},</if>
+		<if test="`introduce`!=null and `introduce`!=''">`introduce`=#{introduce},</if>
+		</trim>
+	</update>
+	<select id="queryUserByUserName" parameterType="string" resultType="User">
+		SELECT * FROM `user` WHERE userName=#{userName} AND `lock`=0
+	</select>
+	<select id="getCount" resultType="int">
+		SELECT COUNT(1) FROM `user`
+		<where>
+			<if test="userName!=null and userName!=''">
+			userName LIKE CONCAT('%',#{userName},'%')
+			</if>
+			<if test="roleId!=null">
+			AND `roleId`=#{roleId}
+			</if>
+			AND `lock`=0
+		</where>
+	</select>
+	<select id="getList" resultType="User">
+		SELECT * FROM `user`
+		<where>
+			<if test="roleId!=null">
+			 `roleId`=#{roleId}
+			</if>
+		<if test="userName!=null and userName!=''">
+			AND userName LIKE CONCAT('%',#{userName},'%')
+		</if> 
+		AND `lock`=0
+		</where>
+		LIMIT #{start},#{pageSize}
+	</select>
+	<delete id="delete" parameterType="int">
+ 		DELETE FROM user WHERE userId=#{userId}
+ 	</delete>
+ 	<update id="updateLock" parameterType="User">
+ 		UPDATE user SET  `lock`=1 WHERE userId=#{userId}
+ 	</update>
+</mapper> 

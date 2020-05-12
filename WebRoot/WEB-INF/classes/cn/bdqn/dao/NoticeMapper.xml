@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="cn.bdqn.dao.NoticeMapper">
+ 	<insert id="add" parameterType="Notice">
+ 		INSERT INTO `notice` VALUES(NULL,#{title},#{releaseTime},#{announcer},#{content},0)
+ 	</insert>
+ 	<select id="getcount" resultType="int">
+ 		SELECT COUNT(1) FROM `notice` 
+ 		<where>
+ 			<if test="title!=null and title!=''">
+ 				title LIKE CONCAT ('%',#{title},'%')
+ 			</if>
+ 			AND `lock`=0
+ 		</where>
+ 	</select>
+ 	<select id="getList" resultType="Notice">
+ 		SELECT * FROM `notice`
+ 		<where>
+ 		   <if test="title!=null and title!=''">
+ 		      title LIKE CONCAT ('%',#{title},'%')
+ 		      </if>
+ 		       AND `lock`=0
+ 		</where> 
+		ORDER BY releaseTime DESC
+		LIMIT #{start},#{pageSize}
+ 	</select>
+ 	<select id="getNoticeById" resultType="Notice">
+ 		SELECT * FROM `notice` WHERE `id`=#{id} 
+ 	</select>
+ 	<select id="getTitleCount" resultType="int">
+ 		SELECT COUNT(1) FROM `notice` WHERE `title`=#{title}
+ 	</select>
+ 	<update id="updateLock">
+ 		UPDATE `notice` SET `lock`=1  WHERE `id`=#{id}
+ 	</update>
+ 	<update id="update" parameterType="Notice">
+ 		UPDATE `notice` 
+ 		<trim prefix="set" suffixOverrides="," suffix="WHERE `id`=#{id}">
+ 		 <if test="title!=null and title!=''">
+ 		       title=#{title},
+ 		  </if>
+ 		 <if test="content!=null and content!=''">
+ 		       content=#{content},
+ 		  </if>
+ 		</trim>
+ 	</update>
+ </mapper>
