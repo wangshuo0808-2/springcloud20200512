@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bdqn.dao.ParkMapper">
+	<select id="getCountByParkName" resultType="Integer" parameterType="String">
+		SELECT COUNT(1) FROM park WHERE parkName=#{parkName}
+	</select>
+	<select id="queryAllParks" resultType="Park">
+		SELECT parkId,parkName,parkIntroduce,alreadyVisitCount,wantToVisitCount,cityName,photo,userId,bestMonth,suitPeople,tourType FROM park
+	</select>
+	<insert id="addPark" parameterType="Park">
+		INSERT INTO park(parkName,parkIntroduce,alreadyVisitCount,wantToVisitCount,cityName,photo,userId,bestMonth,suitPeople,tourType)
+		VALUES(#{parkName},#{parkIntroduce},#{alreadyVisitCount},#{wantToVisitCount},#{cityName},#{photo},#{userId},#{bestMonth},#{suitPeople},#{tourType})
+	</insert>
+	<update id="updatePark" parameterType="Park">
+		UPDATE park SET parkName=#{parkName},parkIntroduce=#{parkIntroduce},
+		cityName=#{cityName},bestMonth=#{bestMonth},suitPeople=#{suitPeople},tourType=#{tourType},photo=#{photo} 
+		WHERE parkId=#{parkId}
+	</update>
+	<delete id="delPark" parameterType="Integer">
+		DELETE FROM park WHERE parkId=#{parkId}
+	</delete>
+	<select id="queryParkById" parameterType="Integer" resultType="Park">
+		SELECT parkId,parkName,parkIntroduce,alreadyVisitCount,wantToVisitCount,cityName,photo,userId,bestMonth,suitPeople,tourType 
+		FROM park WHERE parkId=#{parkId}
+	</select>
+	<select id="getTotalCount" resultType="Integer">
+		SELECT COUNT(1) FROM park WHERE tourType=#{tourType} 
+		<if test="parkName!=null and parkName!=''">
+			AND parkName LIKE CONCAT('%',#{parkName},'%')
+		</if>
+	</select>
+	<select id="queryParksByNameLimit" resultType="Park">
+		SELECT parkId,parkName,parkIntroduce,alreadyVisitCount,wantToVisitCount,cityName,photo,userId,bestMonth,
+		suitPeople,tourType FROM park WHERE tourType=#{tourType} 
+		<if test="parkName!=null and parkName!=''">
+			AND parkName LIKE CONCAT('%',#{parkName},'%')
+		</if>
+		LIMIT #{startRow},#{pageSize}
+	</select>
+	<select id="getTotalCount2" resultType="Integer">
+		SELECT COUNT(1) FROM park 
+		<where>
+			<if test="parkName!=null and parkName!=''">
+				parkName LIKE CONCAT('%',#{parkName},'%')
+			</if>
+		</where>
+	</select>
+	<select id="queryParksByNameLimit2" resultType="Park">
+		SELECT parkId,parkName,parkIntroduce,alreadyVisitCount,wantToVisitCount,cityName,photo,userId,bestMonth,
+		suitPeople,tourType FROM park 
+		<where>
+			<if test="parkName!=null and parkName!=''">
+				parkName LIKE CONCAT('%',#{parkName},'%')
+			</if>
+		</where>
+		LIMIT #{startRow},#{pageSize}
+	</select>
+	<update id="updateAlreadyCount" parameterType="Integer">
+		UPDATE park SET alreadyVisitCount=alreadyVisitCount+1 WHERE parkId=#{parkId}
+	</update>
+	<update id="updateWantCount" parameterType="Integer">
+		UPDATE park SET wantToVisitCount=wantToVisitCount+1 WHERE parkId=#{parkId}
+	</update>
+</mapper>
